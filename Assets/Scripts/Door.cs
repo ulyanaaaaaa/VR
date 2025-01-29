@@ -19,11 +19,6 @@ public class Door : MonoBehaviour
         _interactable.selectEntered?.AddListener(OnDoorInteract);
     }
 
-    private void OnDestroy()
-    {
-        _interactable.selectEntered?.RemoveListener(OnDoorInteract);
-    }
-
     private void OnDoorInteract(SelectEnterEventArgs args)
     {
         if (!_isOpen)
@@ -58,5 +53,10 @@ public class Door : MonoBehaviour
             yield return null;
         }
         _transform.eulerAngles = targetRotation;
+    }
+    
+    private void OnDestroy()
+    {
+        _interactable.selectEntered?.RemoveListener(OnDoorInteract);
     }
 }

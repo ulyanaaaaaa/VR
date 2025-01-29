@@ -20,17 +20,16 @@ public class PhysicsProjectile : Projectile
     public override void Launch()
     {
         base.Launch();
-        _rigidbody.AddRelativeForce(Vector3.forward * _weapon.ShootingForce, ForceMode.Impulse);
+        
+        Vector3 launchDirection = _weapon.transform.forward; 
+        _rigidbody.AddForce(launchDirection * _weapon.ShootingForce, ForceMode.Impulse);
     }
-
+    
     private void OnTriggerEnter(Collider other)
     {
-        Destroy(gameObject);
-        IDamageable[] damageables = other.GetComponentsInChildren<IDamageable>();
-
-        foreach (IDamageable damageable in damageables)
+        if (other.TryGetComponent(out IDamageable damage))
         {
-            damageable.TakeDamage(_weapon, this, transform.position);
+            damage.TakeDamage(_weapon, this, transform.position);
         }
     }
 }

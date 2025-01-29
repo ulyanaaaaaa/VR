@@ -13,6 +13,5 @@ public class PhysicsDamage : MonoBehaviour, IDamageable
     public void TakeDamage(Weapon weapon, Projectile projectile, Vector3 contactPoint)
     {
         Destroy(gameObject);
-        _rigidbody.AddForce(projectile.transform.forward * weapon.ShootingForce, ForceMode.Impulse);
     }
 }

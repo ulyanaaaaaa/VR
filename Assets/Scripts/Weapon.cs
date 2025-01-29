@@ -41,7 +41,6 @@ public class Weapon : MonoBehaviour
     protected virtual void Shoot()
     {
         ApplyRecoil();
-       
     }
 
     protected virtual void PickUpWeapon(XRBaseInteractor interactor)
