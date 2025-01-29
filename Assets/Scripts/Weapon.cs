@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
@@ -22,13 +21,11 @@ public class Weapon : MonoBehaviour
         SetupInteractableWeaponEvents();
     }
 
-    [Obsolete("Obsolete")]
     private void SetupInteractableWeaponEvents()
     {
-        _grabInteractable.onSelectEnter.AddListener(PickUpWeapon);
-        _grabInteractable.onSelectExit.AddListener(DropWeapon);
+        _grabInteractable.onHoverEntered.AddListener(PickUpWeapon);
+        _grabInteractable.onHoverExited.AddListener(DropWeapon);
         _grabInteractable.onActivate.AddListener(StartShooting);
-        _grabInteractable.onDeactivate.AddListener(StopShooting);
     }
 
     protected virtual void StopShooting(XRBaseInteractor arg0)
@@ -38,12 +35,13 @@ public class Weapon : MonoBehaviour
 
     protected virtual void StartShooting(XRBaseInteractor arg0)
     {
-        
+        Shoot();
     }
 
     protected virtual void Shoot()
     {
         ApplyRecoil();
+       
     }
 
     protected virtual void PickUpWeapon(XRBaseInteractor interactor)
@@ -59,5 +57,15 @@ public class Weapon : MonoBehaviour
     private void ApplyRecoil()
     {
         _rigidbody.AddRelativeForce(Vector3.back * _recoilForce, ForceMode.Impulse);
+    }
+
+    private void OnDestroy()
+    {
+        if (_grabInteractable != null)
+        {
+            _grabInteractable.onHoverEntered.RemoveListener(PickUpWeapon);
+            _grabInteractable.onHoverExited.RemoveListener(DropWeapon);
+            _grabInteractable.onActivate.RemoveListener(StartShooting);
+        }
     }
 }

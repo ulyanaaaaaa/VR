@@ -1,46 +1,62 @@
-using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
-[RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(XRGrabInteractable))]
 public class Door : MonoBehaviour
 {
-    private Rigidbody _rigidbody;
-    private XRGrabInteractable _grabInteractable;
+    [SerializeField] private Vector3 _openRotation; 
+    [SerializeField] private Transform _transform; 
+    [SerializeField] private float _openSpeed; 
+    
+    private XRBaseInteractable _interactable; 
+    private Vector3 _closedRotation;
     private bool _isOpen;
-
-    protected virtual void Awake()
-    {
-        _rigidbody = GetComponent<Rigidbody>();
-        _grabInteractable = GetComponent<XRGrabInteractable>();
-
-        SetupInteractableDoorEvents();
-    }
 
     private void Start()
     {
-        
+        _interactable = GetComponent<XRGrabInteractable>();
+        _closedRotation = _transform.eulerAngles;
+        _interactable.selectEntered?.AddListener(OnDoorInteract);
     }
 
-    [Obsolete("Obsolete")]
-    private void SetupInteractableDoorEvents()
+    private void OnDestroy()
     {
-        _grabInteractable.onSelectEnter.AddListener(ChangeState);
+        _interactable.selectEntered?.RemoveListener(OnDoorInteract);
     }
 
-    private void ChangeState(XRBaseInteractor arg0)
+    private void OnDoorInteract(SelectEnterEventArgs args)
     {
-        Debug.Log("OpenOrClose");
-        if (_isOpen)
+        if (!_isOpen)
         {
-            
+            OpenDoor();
         }
         else
         {
-           
+            CloseDoor();
         }
+    }
 
-        _isOpen = !_isOpen;
+    private void OpenDoor()
+    {
+        StopAllCoroutines();
+        StartCoroutine(RotateDoor(_openRotation));
+        _isOpen = true;
+    }
+
+    private void CloseDoor()
+    {
+        StopAllCoroutines();
+        StartCoroutine(RotateDoor(_closedRotation));
+        _isOpen = false;
+    }
+
+    private IEnumerator RotateDoor(Vector3 targetRotation)
+    {
+        while (Vector3.Distance(_transform.eulerAngles, targetRotation) > 0.01f)
+        {
+            _transform.eulerAngles = Vector3.Lerp(_transform.eulerAngles, targetRotation, Time.deltaTime * _openSpeed);
+            yield return null;
+        }
+        _transform.eulerAngles = targetRotation;
     }
 }
