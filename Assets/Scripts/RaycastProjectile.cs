@@ -9,11 +9,9 @@ public class RaycastProjectile : Projectile
 
         if (Physics.Raycast(transform.position, transform.forward, out hit))
         {
-            IDamageable[] damageables = hit.collider.GetComponentsInChildren<IDamageable>();
-            
-            foreach (IDamageable damageable in damageables)
+            if (hit.collider.TryGetComponent(out IDamageable damage))
             {
-                damageable.TakeDamage(_weapon, this, hit.point);    
+                damage.TakeDamage(_weapon, this, hit.point);
             }
         }
     }

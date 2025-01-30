@@ -26,6 +26,7 @@ public class Weapon : MonoBehaviour
         _grabInteractable.onHoverEntered.AddListener(PickUpWeapon);
         _grabInteractable.onHoverExited.AddListener(DropWeapon);
         _grabInteractable.onActivate.AddListener(StartShooting);
+        _grabInteractable.onDeactivate.AddListener(StopShooting);
     }
 
     protected virtual void StopShooting(XRBaseInteractor arg0)
